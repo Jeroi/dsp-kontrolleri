@@ -1,12 +1,3 @@
-// x54 x23 x23 x12
-// int16_t >> B0000 0000 0101 0000
-#define osoitemaski // tähän i2c dsp osoite -> mun bitti | maski 
-// -120 -> 10
-int8_t volume = 0;
-uint32_t i2c_data = 0;
-uint8_t dataOsoite = 0;
-
-/* Kanava 1 */
 
 class audioKanava {
  private:
