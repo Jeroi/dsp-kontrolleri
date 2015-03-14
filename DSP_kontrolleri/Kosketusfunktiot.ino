@@ -20,13 +20,14 @@ uint8_t tarkistatouch() {
       p.y = map(p.y, TS_MINY, TS_MAXY, 0, 320);    
       //Serial.println(p.x);
       //Serial.println(p.y);
-      byte vastaus = suoritaKosketus(p.y, p.x);  
-      if (vastaus) return 1;
+      return suoritaKosketus(p.y, p.x);  
     }
   }
-  //Jos kosketus ei osu oiekaa alueeseen
+  //Jos kosketus ei osu oikeaa alueeseen
   return 0; 
 }
+
+
 byte suoritaKosketus(byte y, byte x) {
     /**TO
       Välilehtitunnistus ja evätään tunnistus jos kosketus on voluumin säätimen kohdalla
@@ -35,73 +36,118 @@ byte suoritaKosketus(byte y, byte x) {
       siten säästetään prosessoriaikaa.
     **/
     // 
-    if (y > 3 && y < 53 && x < 256) {
-      if ( x > 3 && x < 61) { 
+    if (y > 2 && y < 58 && x < 258) {
+      if ( x > 2 && x < 62) { 
         //Nykyisen välilehden tarkistus
         if (currentChannel != 0) {
-          //Mikäli välilehti ei ollut aktiivinen jo valmiiksi suoritetaan piirtoa ja päivitetään currentChannel
+          //Mikäli välilehti ei ollut aktiivinen jo valmiiksi päivitetään currentChannel
           currentChannel = 0;
-          piirraKanavat();    
+          piirraKanavat();
           return 1;
         }
-        
-        else if (x > 67 && x < 125) {
-          if (currentChannel != 1) {
-            currentChannel = 1;
-            piirraKanavat();
-            return 1; 
-          }
+      }
+      else if (x > 67 && x < 127) {
+        if (currentChannel != 1) {
+          currentChannel = 1;
+          piirraKanavat();
+          return 1;
         }
-        else if (x > 131 && x < 189) {
-          if (currentChannel != 2) {
-           currentChannel = 2; 
-           piirraKanavat();
-           return 1;
-          }
+      }
+      else if (x > 132 && x < 192) {
+        if (currentChannel != 2) {
+         currentChannel = 2;
+         piirraKanavat();
+         return 1;
         }
-        else if (x > 195 && x < 253) {
-          if (currentChannel != 3) {
-            currentChannel = 3;
-            piirraKanavat();
-           return 1;
-          }
+      }
+      else if (x > 197 && x < 257) {
+        if (currentChannel != 3) {
+          currentChannel = 3;
+          piirraKanavat();
+          return 1;
         }
+      }
+      
     }
     /**
       Tähän kanavakohtaiset laatikoiden tunnistukset
     **/
-    else if (x > 0 && x < 53 && y > 60) {
-      if (y > 63 && y < 117) {
-        boolean tila = channel[currentChannel].getMute;     
+    boolean tila;
+    else if (x > 2 && x < 58 && y > 62) {
+      if (y > 62 && y < 118) {
+        tila = channel[currentChannel].getMute;     
         if (tila) channel[currentChannel].setMute(false);
         else channel[currentChannel].setMute(true);
-           
+        piirraMute();
+        return 1;   
       }
-      else if (y > 123 && y < 177) {
-        boolean tila = channel[currentChannel].getMute;     
-        if (tila) channel[currentChannel].setMute(false);
-        else channel[currentChannel].setMute(true);
-           
+      else if (y > 122 && y < 178) {
+        //Ei funktionaalisuutta tässä laatikossa
+        piirraTyhja();
+        return 1;   
       }
-      else if (y > 183 && y < 237) {
-        boolean tila = channel[currentChannel].getMute;     
-        if (tila) channel[currentChannel].setMute(false);
-        else channel[currentChannel].setMute(true);
-           
+      else if (y > 182 && y < 238) {
+        tila = channel[currentChannel].getLoudness;     
+        if (tila) channel[currentChannel].setLoudness(false);
+        else channel[currentChannel].setLoudness(true);
+        piirraLoudness();
+        return 1;   
       }
     }
-     /**TODO
-      Tähän kanavakohtainen balanssitunnistus
+     /**
+      Kanavakohtainen slideritunnistus
     **/
-    
-    /**TODO
-      Tähän kanavakohtainen basso
+    else if (x > 62 && x < 258 && y > 62) {
+      //Ollaan kosketettu joitakin kanavakohtaisia slidereita
+      
+      //Tarkastellaan onko kosketetettu balanssia
+      if (y > 70 && y < 110) {
+        poistaVedin(1)
+        channel[currentChannel].setBalanssi(x);
+        piirraVedin(1);
+        return 1;
+           
+      }
+      else if (y > 130 && y < 170) {
+        poistaVedin(2);
+        channel[currentChannel].setBasso(x);
+        piirraVedin(2);
+        return 1;
+           
+      }
+      else if (y > 190 && y < 230) {
+        poistaVedin(3);
+        channel[currentChannel].setDiskantti(x);     
+        piirraVedin(3);
+        return 1;    
+      }
+    }
+    /**
+      Päävoimakkuus ja loudness
     **/
+    else if (x > 260) {
+       //Voimakkuus sliderin tunnistus
+      if (y > 30 x < 150) {
+         //Poistetaan edellinen piirto
+         poistaVedin(0);
+         //Talletetetaan nykyinen kosketuskordinaatti
+         volume = y;
+         //Piirretään tallennetun kordinaatin mukaan uusi vetimen sijainti
+         piirraVedin(0);
+         return 1;
+      }
+      /**
+        Loudness
+      **/
     
-    /**TODO
-      Tähän kanavakohtainen diskantti
-    **/
-    
-  }   
-}
+      else if (y > 182) {
+         if (loudness == true) laudness = false;
+         else loudness == true;
+         piirraLoudness();
+         return 1;       
+      }            
+    }
+    return 0;
+}   
+
   

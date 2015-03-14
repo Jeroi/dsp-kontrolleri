@@ -5,6 +5,13 @@
   otaYhteys = funktion nimi ja aina ensimäinen kirjain pienellä ja lisäsanat isolla
   
   byte a jne määrittää funktiolla syötettävien parametrien tyypit.
+  
+  DSP master osoitteet
+  BASE ADDRESS   CS0   R/W´  MASTER ADDRESS
+  1010 00        0     0     0xA0
+  1010 00        0     1     0xA1
+  1010 00        1     0     0xA2
+  1010 00        1     1     0xA3
 
 */
 
@@ -25,3 +32,13 @@ uint8_t otaYhteys(byte a = 0, byte b = 0, byte c=0, byte d = 0) {
    
   
 }
+
+
+void sendDSPcommand (int registeri, int value) {
+    osoite = //DSP piirin osoite
+    Wire.beginTransmission(osoite); // transmit to device #4
+    Wire.write("x is ");        // sends five bytes
+    Wire.write(x);              // sends one byte
+    Wire.endTransmission();    // stop transmitting
+  
+  }

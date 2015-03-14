@@ -1,20 +1,19 @@
 
 class audioKanava {
  private:
-    boolean mute = true;
+    boolean mute = false;
     boolean loudness = false;
     boolean kompressori = false;
 
-    int8_t vasen = 0;
-    int8_t oikea = 0;
+    byte balanssi = 0;
     byte basso = 0;
     byte diskantti = 0;
+ 
  public:
    boolean getMute ();
    boolean getLoudness ();
    boolean getkompressori ();
-   int8_t getVasen();
-   int8_t getOikea();
+   byte getBalanssi();
    byte getDiskantti();
    byte getBasso();
    void setMute(boolean);
@@ -35,11 +34,8 @@ boolean getLoudness() {
 boolean getKompressori() {
    return kompressori; 
 }
-int8_t getVasen() {
-  return vasen;
-}
-int8_t getOikea () {  
-  return oikea; 
+byte getBalanssi() {
+  return balanssi;
 }
 byte getBasso () {
    return basso; 
@@ -62,9 +58,7 @@ void setDiskantti(byte i) {
 void setBasso(byte i) {
    basso = i; 
 }
-void setVasen(int8_t i) {
+void setBalanssi(int8_t i) {
    vasen = i; 
 }
-void setOikea(int8_t i) {
-   oikea = i; 
-}
+
