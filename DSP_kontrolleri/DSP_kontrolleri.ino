@@ -1,6 +1,7 @@
 #include "TFTLCD.h"
 #include "TouchScreen.h"
 #include <Wire.h>
+#include "audioKanava.h"
 
 //Duemilanove/Diecimila/UNO/etc ('168 and '328 chips) microcontoller:
 
@@ -52,16 +53,32 @@ TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
 
 TFTLCD tft(LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET);
 
-Wire i2c;
+TwoWire i2c;
 
-#define BOXSIZE 40
-#define PENRADIUS 3
+//Sisääntuloasetukset
+struct audioKanava {
+    bool mute = false;
+    bool kompressori = false;
+    uint8_t bassoKoordinaatti = // Bassosliderin koordinaatti
+    uint8_t diskanttiKoordinaatti = 0;
+    uint8_t balanssiKordinaatti  = 0;
+};
+//Neljä sisääntuloa
+audioKanava channel[4];
+
+//Ulostuloasetukset
+struct ulostulo {
+  bool loudness = false;
+  uint8_t volumeKordinaatti = 0;
+}
+//Yksi ulostulo
+ulostulo output;
+
 int oldcolor, currentcolor;
 
-audiokanava channel[4];
 uint8_t currentChannel = 0;
 boolean loudness = false;
-int volume = 0;
+
 
 void setup(void) {
   Serial.begin(9600);

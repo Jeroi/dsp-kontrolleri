@@ -10,6 +10,8 @@
   Maksimi 320 x = oikea reuna
 */
 
+
+
 void pyyhiruutu() {  
  tft.fillScreen(BLACK); 
 }

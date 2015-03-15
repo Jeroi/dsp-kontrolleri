@@ -35,35 +35,41 @@ byte suoritaKosketus(byte y, byte x) {
       Ensimäinen if siksi että näitä ajoja ei ajeta muutakuin silloin ku ollaan sallituissa rajoissa kosketuksen kanssa,
       siten säästetään prosessoriaikaa.
     **/
-    // 
+    
     if (y > 2 && y < 58 && x < 258) {
       if ( x > 2 && x < 62) { 
         //Nykyisen välilehden tarkistus
         if (currentChannel != 0) {
-          //Mikäli välilehti ei ollut aktiivinen jo valmiiksi päivitetään currentChannel
+          //Välilehti ei ollut aktiivinen, vaihdetaan nykyisen kanavan taustaväri
+          poistaKanava(currentChannel);
+          //Päivitetään valittu kanava muuttujaan
           currentChannel = 0;
-          piirraKanavat();
+          //Väritetään kanavan tausta uudestaan
+          piirraKanava(currentChannel);
           return 1;
         }
       }
       else if (x > 67 && x < 127) {
         if (currentChannel != 1) {
+          poistaKanava(currentChannel);
           currentChannel = 1;
-          piirraKanavat();
+          piirraKanava(currentChannel);
           return 1;
         }
       }
       else if (x > 132 && x < 192) {
         if (currentChannel != 2) {
-         currentChannel = 2;
-         piirraKanavat();
-         return 1;
+          poistaKanava(currentChannel);
+          currentChannel = 2;
+          piirraKanava(currentChannel);
+          return 1;
         }
       }
       else if (x > 197 && x < 257) {
         if (currentChannel != 3) {
+          poistaKanava(currentChannel);
           currentChannel = 3;
-          piirraKanavat();
+          piirraKanava(currentChannel);
           return 1;
         }
       }
@@ -72,24 +78,24 @@ byte suoritaKosketus(byte y, byte x) {
     /**
       Tähän kanavakohtaiset laatikoiden tunnistukset
     **/
-    boolean tila;
     else if (x > 2 && x < 58 && y > 62) {
-      if (y > 62 && y < 118) {
-        tila = channel[currentChannel].getMute;     
-        if (tila) channel[currentChannel].setMute(false);
-        else channel[currentChannel].setMute(true);
+      if (y > 62 && y < 118) {     
+        if (channel[currentChannel].mute) channel[currentChannel].mute = false;
+        else channel[currentChannel].mute = true;
         piirraMute();
         return 1;   
       }
+      /* Ei tehdä keksimäisen kanvakohtaisen ruudun kosketukselle mitään.
       else if (y > 122 && y < 178) {
         //Ei funktionaalisuutta tässä laatikossa
-        piirraTyhja();
+        //piirraTyhja();
         return 1;   
-      }
-      else if (y > 182 && y < 238) {
-        tila = channel[currentChannel].getLoudness;     
-        if (tila) channel[currentChannel].setLoudness(false);
-        else channel[currentChannel].setLoudness(true);
+      }*/
+      
+      //Mikäli kompressoria nappia painetaan
+      else if (y > 182 && y < 238) {    
+        if (channel[currentChannel].kompressori) channel[currentChannel].kompressori = false;
+        else channel[currentChannel].kompressori = true;
         piirraLoudness();
         return 1;   
       }
@@ -102,22 +108,23 @@ byte suoritaKosketus(byte y, byte x) {
       
       //Tarkastellaan onko kosketetettu balanssia
       if (y > 70 && y < 110) {
+        if (x != channel[currentChannel].balanssiKordinaatti
         poistaVedin(1)
-        channel[currentChannel].setBalanssi(x);
+        channel[currentChannel].balanssiKordinaatti = x;
         piirraVedin(1);
         return 1;
            
       }
       else if (y > 130 && y < 170) {
         poistaVedin(2);
-        channel[currentChannel].setBasso(x);
+        channel[currentChannel].bassoKordinaatti = x;
         piirraVedin(2);
         return 1;
            
       }
       else if (y > 190 && y < 230) {
         poistaVedin(3);
-        channel[currentChannel].setDiskantti(x);     
+        channel[currentChannel].diskanttiKordinaatti = x;     
         piirraVedin(3);
         return 1;    
       }
@@ -127,11 +134,11 @@ byte suoritaKosketus(byte y, byte x) {
     **/
     else if (x > 260) {
        //Voimakkuus sliderin tunnistus
-      if (y > 30 x < 150) {
+      if (y > 30 && y < 150) {
          //Poistetaan edellinen piirto
          poistaVedin(0);
          //Talletetetaan nykyinen kosketuskordinaatti
-         volume = y;
+         output.volumeKordinaatti = y;
          //Piirretään tallennetun kordinaatin mukaan uusi vetimen sijainti
          piirraVedin(0);
          return 1;
@@ -141,8 +148,8 @@ byte suoritaKosketus(byte y, byte x) {
       **/
     
       else if (y > 182) {
-         if (loudness == true) laudness = false;
-         else loudness == true;
+         if (output.loudness == true) output.laudness = false;
+         else output.loudness == true;
          piirraLoudness();
          return 1;       
       }            
